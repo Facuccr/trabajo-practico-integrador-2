@@ -1,0 +1,52 @@
+import { articleModel } from "../models/article.model";
+import { commentModel } from "../models/comment.model.js";
+
+export const commentOwnerAdminMiddleware = async (req, res, next) => {
+  const user = req.user;
+  const { id } = req.params;
+  try {
+    const comment = await commentModel.findById(id);
+
+    if (!comment) {
+      return res.status(404).json({ msg: "commentario no encontrado" });
+    }
+
+    if (user.role === "admin" || commentModel.author === user.id) {
+      return next();
+    }
+
+    return res
+      .status(403)
+      .json({ ok: false, msg: "no tienes acceso a este recurso" });
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      message: "error interno en el servidor ",
+    });
+  }
+};
+
+export const aricleOwnerAdminMiddleware = async (req, res, next) => {
+  const user = req.user;
+  const { id } = req.params;
+  try {
+    const aricle = await articleModel.findById(id);
+
+    if (!comment) {
+      return res.status(404).json({ msg: "articulo no encontrado" });
+    }
+
+    if (user.role === "admin" || articleModel.author === user.id) {
+      return next();
+    }
+
+    return res
+      .status(403)
+      .json({ ok: false, msg: "no tienes acceso a este recurso" });
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      message: "error interno en el servidor ",
+    });
+  }
+};
