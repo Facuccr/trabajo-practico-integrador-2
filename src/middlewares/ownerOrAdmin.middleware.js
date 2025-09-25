@@ -28,9 +28,9 @@ export const commentOwnerAdminMiddleware = async (req, res, next) => {
 
 export const articleOwnerAdminMiddleware = async (req, res, next) => {
   const user = req.user;
-  const { id } = req.params;
+  const { articleId } = req.params;
   try {
-    const article = await articleModel.findById(id);
+    const article = await articleModel.findById(articleId);
 
     if (!article) {
       return res.status(404).json({ msg: "articulo no encontrado" });
