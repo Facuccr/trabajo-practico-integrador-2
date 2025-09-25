@@ -1,11 +1,10 @@
-import { Schema } from "mongoose";
-import { type } from "os";
+import { Schema, model } from "mongoose";
 
 const tagSchema = new Schema(
   {
     name: {
       type: String,
-      unique: true,
+
       minlength: 2,
       maxlength: 30,
       trim: true,
@@ -15,7 +14,12 @@ const tagSchema = new Schema(
   },
   { timestamps: true, versionKey: false }
 );
-
+tagSchema.virtual("articles", {
+  ref: "Article",
+  localField: "_id",
+  foreignField: "tags",
+});
+tagSchema.set("toJSON", { virtuals: true });
 export const tagModel = model("Tag", tagSchema);
 // 3. Tag (Etiqueta)
 // ● _id (ObjectId automático)

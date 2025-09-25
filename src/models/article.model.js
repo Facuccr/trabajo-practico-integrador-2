@@ -1,5 +1,5 @@
-import { Schema, Types } from "mongoose";
-
+import { Schema, Types, model } from "mongoose";
+import { commentModel } from "./comment.model.js";
 const ArticleSchema = new Schema(
   {
     title: { type: String, minlength: 3, maxlength: 200, required: true },
@@ -16,16 +16,18 @@ const ArticleSchema = new Schema(
   { timestamps: true, versionKey: false }
 );
 
+//funcion elminacion en cascada, al borrar un user se borra sus comments
+ArticleSchema.pre("findOneAndDelete", async function (next) {
+  const articleId = this.getQuery()._id;
+  await commentModel.deleteMany({ article: articleId });
+  next();
+});
+
+//populate inverso
+ArticleSchema.virtual("comments", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "author",
+});
+ArticleSchema.set("toJSON", { virtuals: true });
 export const articleModel = model("Article", ArticleSchema);
-
-// 2. Article (Artículo)
-// ● _id (ObjectId automático)
-// ● title (String, 3-200 caracteres)
-// ● content (String, mínimo 50 caracteres)
-// ● excerpt (String, máximo 500 caracteres, opcional)
-
-// ● status (String, enum: 'published', 'archived', default: 'published')
-// ● author (ObjectId, referencia a User)
-// ● tags (Array de ObjectIds, referencias a Tag - relación N:M)
-// ● createdAt (Date)
-// ● updatedAt (Date)

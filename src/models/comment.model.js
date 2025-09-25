@@ -1,4 +1,4 @@
-import { Schema, Types } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
 const commetSchema = new Schema(
   {
@@ -10,11 +10,3 @@ const commetSchema = new Schema(
 );
 
 export const commentModel = model("Comment", commetSchema);
-
-// 4. Comment (Comentario) - Nuevo modelo
-// ● _id (ObjectId automático)
-// ● content (String, 5-500 caracteres)
-// ● author (ObjectId, referencia a User)
-// ● article (ObjectId, referencia a Article - relación 1:N)
-// ● createdAt (Date)
-// ● updatedAt (Date)
