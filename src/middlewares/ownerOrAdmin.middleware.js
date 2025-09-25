@@ -1,4 +1,4 @@
-import { articleModel } from "../models/article.model";
+import { articleModel } from "../models/article.model.js";
 import { commentModel } from "../models/comment.model.js";
 
 export const commentOwnerAdminMiddleware = async (req, res, next) => {
@@ -11,7 +11,7 @@ export const commentOwnerAdminMiddleware = async (req, res, next) => {
       return res.status(404).json({ msg: "commentario no encontrado" });
     }
 
-    if (user.role === "admin" || commentModel.author === user.id) {
+    if (user.role === "admin" || comment.author.toString() === user.id) {
       return next();
     }
 
@@ -26,17 +26,17 @@ export const commentOwnerAdminMiddleware = async (req, res, next) => {
   }
 };
 
-export const aricleOwnerAdminMiddleware = async (req, res, next) => {
+export const articleOwnerAdminMiddleware = async (req, res, next) => {
   const user = req.user;
   const { id } = req.params;
   try {
-    const aricle = await articleModel.findById(id);
+    const article = await articleModel.findById(id);
 
-    if (!comment) {
+    if (!article) {
       return res.status(404).json({ msg: "articulo no encontrado" });
     }
 
-    if (user.role === "admin" || articleModel.author === user.id) {
+    if (user.role === "admin" || article.author.toString() === user.id) {
       return next();
     }
 
@@ -47,6 +47,7 @@ export const aricleOwnerAdminMiddleware = async (req, res, next) => {
     return res.status(500).json({
       ok: false,
       message: "error interno en el servidor ",
+      error: error.message,
     });
   }
 };
