@@ -28,6 +28,19 @@ const userSchema = new Schema(
   { timestamps: true, versionKey: false }
 );
 
+//eliminacion en cascada
+userSchema.pre("findByIdAndUpdate", async (doc) => {
+  if (!doc) return;
+
+  if (doc.deletedAt !== null) {
+    const ArticleModel = model("Article");
+    const CommentModel = model("Comment");
+
+    await ArticleModel.deleteMany({ author: doc._id });
+    await CommentModel.deleteMany({ author: doc._id });
+  }
+});
+
 //para populates inversos
 userSchema.virtual("articles", {
   ref: "Article",

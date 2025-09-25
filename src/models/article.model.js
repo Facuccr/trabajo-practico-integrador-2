@@ -16,11 +16,13 @@ const ArticleSchema = new Schema(
   { timestamps: true, versionKey: false }
 );
 
-//funcion elminacion en cascada, al borrar un user se borra sus comments
-ArticleSchema.pre("findOneAndDelete", async function (next) {
-  const articleId = this.getQuery()._id;
-  await commentModel.deleteMany({ article: articleId });
-  next();
+//eliminacion en cascada
+ArticleSchema.pre("findByIdAndDelete", async (doc) => {
+  if (!doc) return;
+
+  const CommentModel = model("Comment");
+
+  await CommentModel.deleteMany({ article: doc._id });
 });
 
 //populate inverso

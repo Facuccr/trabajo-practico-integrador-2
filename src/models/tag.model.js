@@ -1,10 +1,9 @@
 import { Schema, model } from "mongoose";
-
+import { articleModel } from "./article.model.js";
 const tagSchema = new Schema(
   {
     name: {
       type: String,
-
       minlength: 2,
       maxlength: 30,
       trim: true,
@@ -14,6 +13,16 @@ const tagSchema = new Schema(
   },
   { timestamps: true, versionKey: false }
 );
+tagSchema.post("findByIdAndDelete", async (doc) => {
+  if (!doc) return;
+
+  const articleModel = model("Article");
+
+  await articleModel.updateMany(
+    { tags: doc._id },
+    { $pull: { tags: doc._id } }
+  );
+});
 tagSchema.virtual("articles", {
   ref: "Article",
   localField: "_id",
