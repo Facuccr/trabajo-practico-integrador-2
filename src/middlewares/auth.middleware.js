@@ -12,13 +12,14 @@ export const authMiddleware = async (req, res, next) => {
 
     const decoded = verifyToken(token);
 
-    req.user = {
-      id: decoded._id,
-      role: decoded.role,
-    };
+    req.user = decoded;
 
     next();
   } catch (error) {
-    throw new Error("error en el middleware de autenticacion", error.message);
+    console.log(error);
+    res.status(500).json({
+      msg: "error en el middleware de autenticacion",
+      error: error.message,
+    });
   }
 };
